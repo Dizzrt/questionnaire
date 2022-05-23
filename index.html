@@ -57,7 +57,7 @@
                 <div class="form-group row">
                   <label class="col-sm-3 form-control-label">问卷简介</label>
                   <div class="col-sm-9">
-                    <input id="qintro" class="form-control form-control-warning">
+                    <input id="qdes" class="form-control form-control-warning">
                   </div>
                 </div>
               </form>
@@ -66,73 +66,20 @@
         </div>
       </section>
 
-      <section class="no-padding-bottom">
-        <div class="container-fluid">
-          <div class="block">
-            <div style=" height: 40px; width: 100%;">
-              <strong
-                style="height: 40px; text-align: center; line-height: 40px; font-size: 20px; color: #a5a7ab;">问答题x</strong>
-              <input style="height: 40px; float: right;" type="button" value="删除该问题" class="btn btn-primary">
-            </div>
+      <div id="ques">
 
-            <textarea id="inlineFormInput" type="text" style="margin-top: 25px; height: 100px; " placeholder="问题描述"
-              class="form-control"></textarea>
-          </div>
-        </div>
-      </section>
-
-
-      <section class="no-padding-bottom">
-        <div class="container-fluid">
-          <div class="block">
-            <div style=" height: 40px; width: 100%;">
-              <strong
-                style="height: 40px; text-align: center; line-height: 40px; font-size: 20px; color: #a5a7ab;">选择题x</strong>
-              <input style="height: 40px; float: right;" type="button" value="删除该问题" class="btn btn-primary">
-            </div>
-
-            <div class="block-body" style="margin-top: 25px;">
-              <form class="form-horizontal">
-                <div class="form-group row">
-                  <label class="col-sm-3 form-control-label">问题描述</label>
-                  <div class="col-sm-9">
-                    <input type="text" class="form-control">
-                  </div>
-                </div>
-
-                <div class="row" style="margin-top: 25px;">
-                  <label class="col-sm-3 form-control-label">可选项</label>
-
-                  <div class="col-sm-9">
-                    <div class="form-group-material">
-                      <input id="register-username" type="text" name="registerUsername" required class="input-material">
-                      <label for="register-username" class="label-material">选项A</label>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="form-group row">
-                  <div class="col-sm-9 ml-auto">
-                    <button type="submit" class="btn btn-primary" style="float: right;">添加一个选项</button>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <div class="block-body text-center">
-        <button style="width: 110px; margin-right: 25px;" type="button" data-toggle="modal" data-target="#myModal"
-          class="btn btn-primary">添加选择题</button>
-
-        <button style="width: 110px; margin-right: 25px;" type="button" data-toggle="modal" data-target="#myModal"
-          class="btn btn-primary">添加问答题</button>
-
-        <button style="width: 110px; " type="button" data-toggle="modal" data-target="#myModal"
-          class="btn btn-primary">完成该问卷</button>
       </div>
 
+
+      <div class="block-body text-center">
+        <button onclick="addCq()" style="width: 110px; margin-right: 25px;" type="button"
+          class="btn btn-primary">添加选择题</button>
+
+        <button onclick="addEq()" style="width: 110px; margin-right: 25px;" type="button"
+          class="btn btn-primary">添加问答题</button>
+
+        <button onclick="complete()" style="width: 110px; " type="button" class="btn btn-primary">完成该问卷</button>
+      </div>
     </div>
   </div>
 
@@ -142,6 +89,8 @@
   <script src="js/front.js"></script>
 
   <script>
+    var __uid__ = 0;
+
     !function init() {
       let clist = document.cookie.split(";");
       if (clist.length == 0) {
@@ -159,6 +108,7 @@
           let uid = cookie.substring(4, cookie.length);
           if (uid == "")
             location.href = "./login.html";
+          else __uid__ = uid;
         }
       }
     }()
@@ -166,6 +116,128 @@
     function logout() {
       document.cookie = "uid=";
       location.href = "./login.html";
+    }
+
+    var eqs = [];
+    var cqs = [];
+
+    function getEq() {
+      let t = new Date().getTime();
+      eqs.push(t);
+      let eq = "<section id=\"" + t + "\" class=\"no-padding-bottom\">\
+          <div class=\"container-fluid\"><div class=\"block\">\
+              <div style=\"height: 40px; width: 100%;\">\
+                <strong style=\"height: 40px; text-align: center; line-height: 40px; font-size: 20px; color: #a5a7ab;\">问答题 "+ eqs.length + "</strong>\
+                <input onclick=\"delEq("+ t + ")\" style=\"height: 40px; float: right;\" type=\"button\" value=\"删除该问题\" class=\"btn btn-primary\">\
+              </div><textarea id=\"des_"+ t + "\" type=\"text\" style=\"margin-top: 25px; height: 100px; \" placeholder=\"问题描述\"\
+                class=\"form-control\"></textarea></div></div></section>";
+
+      return eq;
+    }
+
+    function getCq() {
+      let t = new Date().getTime();
+      cqs.push(t);
+      let cq = "<section id=\"" + t + "\" class=\"no-padding-bottom\">\
+          <div class=\"container-fluid\"><div class=\"block\"><div style=\" height: 40px; width: 100%;\">\
+                <strong style=\"height: 40px; text-align: center; line-height: 40px; font-size: 20px; color: #a5a7ab;\">选择题 "+ cqs.length + "</strong>\
+                <input onclick=\"delCq("+ t + ")\" style=\"height: 40px; float: right;\" type=\"button\" value=\"删除该问题\" class=\"btn btn-primary\"></div>\
+              <div class=\"block-body\" style=\"margin-top: 25px;\">\
+                <form class=\"form-horizontal\"><div class=\"form-group row\">\
+                    <label class=\"col-sm-3 form-control-label\">问题描述</label><div class=\"col-sm-9\">\
+                      <input id=\"des_"+ t + "\" type=\"text\" class=\"form-control\"></div></div><div class=\"row\" style=\"margin-top: 25px;\">\
+                    <label class=\"col-sm-3 form-control-label\">可选项</label>\
+                    <div class=\"col-sm-9\"><div id=\"ops_"+ t + "\" class=\"form-group-material\">\
+                        <input style=\"margin-bottom: 10px;\" placeholder=\"选项内容\" id=\"register-username\" type=\"text\" name=\"registerUsername\" required class=\"input-material\">\
+                        <input style=\"margin-bottom: 10px;\" placeholder=\"选项内容\" id=\"register-username\" type=\"text\" name=\"registerUsername\" required class=\"input-material\">\
+                        </div></div></div>\
+                  <div class=\"form-group row\"><div class=\"col-sm-9 ml-auto\">\
+                      <button type=\"submit\" class=\"btn btn-primary\" style=\"float: right;\">添加一个选项</button>\
+                    </div></div></form></div></div></div></section>"
+
+      return cq;
+    }
+
+
+    function addEq() {
+      // document.getElementById("ques").innerHTML += getEq();
+      $('#ques').append(getEq());
+    }
+
+    function delEq(id) {
+      eqs.splice(eqs.indexOf(id), 1);
+      document.getElementById(id).remove();
+
+      for (let i = 0; i < eqs.length; i++) {
+        let e = document.getElementById(eqs[i]);
+        e = e.children[0].children[0].children[0].children[0];
+
+        e.innerText = "问答题 " + (i + 1);
+      }
+    }
+
+    function addCq() {
+      // document.getElementById("ques").innerHTML += getCq();
+      $('#ques').append(getCq());
+    }
+
+    function delCq(id) {
+      cqs.splice(cqs.indexOf(id), 1);
+      document.getElementById(id).remove();
+
+      for (let i = 0; i < cqs.length; i++) {
+        let e = document.getElementById(cqs[i]);
+        e = e.children[0].children[0].children[0].children[0];
+
+        e.innerText = "选择题 " + (i + 1);
+      }
+    }
+
+    function complete() {
+      let qtitle = document.getElementById("qtitle").value;
+      let qdes = document.getElementById("qdes").value;
+
+      let msg = "uid=" + __uid__ + "&title=" + qtitle + "&des=" + qdes + "&eqCnt=" + eqs.length + "&cqCnt=" + cqs.length;
+      for (let i = 0; i < eqs.length; i++) {
+        let id = eqs[i];
+        msg += "&eq" + i + "=" + document.getElementById("des_" + id).value;
+      }
+
+      for (let i = 0; i < cqs.length; i++) {
+        let id = cqs[i];
+        msg += "&cq" + i + "=" + document.getElementById("des_" + id).value;
+
+        let opsCnt = document.getElementById("ops_" + id).children.length;
+        msg += "&cq" + i + "_opCnt=" + opsCnt;
+
+        let ops = document.getElementById("ops_" + id).children
+        for (let j = 0; j < opsCnt; j++) {
+          msg += "&cq" + i + "_op" + j + "=" + ops[j].value;
+        }
+      }
+
+      let xhr = new XMLHttpRequest();
+      xhr.open("GET", "/php/createSur.php?" + msg, true);
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          if (xhr.responseText == "error") {
+            alert("error");
+          }
+          else {
+            var temp = document.createElement('input');
+            temp.value = xhr.responseText;//TODO real url
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand("Copy");
+            temp.className = 'temp';
+            temp.style.display = 'none';
+
+            alert("问卷创建成功！问卷链接已复制到剪切板，快去分享吧！");
+          }
+        }
+      }
+
+      xhr.send();
     }
   </script>
 </body>

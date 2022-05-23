@@ -1,23 +1,27 @@
-<head>javascript控制5秒后页面自动跳转</head>
-<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<!DOCTYPE html>
+<html lang="zh-cn">
 <title>无标题文档</title>
-<script type="text/javascript">
-    function countDown(secs, surl) {
-        //alert(surl);     
-        var jumpTo = document.getElementById('jumpTo');
-        jumpTo.innerHTML = secs;
-        if (--secs > 0) {
-            setTimeout("countDown(" + secs + ",'" + surl + "')", 1000);
-        }
-        else {
-            location.href = surl;
-        }
-    }     
-</script>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
 </head>
 
-<body><span id="jumpTo">5</span>秒后自动跳转到http://www.baidu.com/
-    <script type="text/javascript">countDown(5, 'http://www.baidu.com/');</script>
+<body>
+    <div cols="20" id="biao1">12345678</div>
+    <input type="button" onClick="copyUrl2()" value="点击复制代码" />
+
+    <script>
+
+        function copyUrl2() {
+            var Url2 = document.getElementById("biao1").innerText;
+            var oInput = document.createElement('input');
+            oInput.value = Url2;
+            document.body.appendChild(oInput);
+            oInput.select(); // 选择对象
+            document.execCommand("Copy"); // 执行浏览器复制命令
+            oInput.className = 'oInput';
+            oInput.style.display = 'none';
+            alert('复制成功');
+        }
+    </script>
 </body>
 
 </html>
