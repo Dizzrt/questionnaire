@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="utf-8">
+  <title>问卷星系统</title>
+</head>
+
+<body>
+  <h1 id="H1" style="width: 300px; top: 61.8px; margin-left: auto; margin-right: auto; text-align: center;">
+    感谢注册问卷星系统</h1>
+  <a id="Btn" target="_self" href="./login.html">
+    <p id="P"
+      style="display: none; width: 200px; top: 61.8px; margin-left: auto; margin-right: auto; text-align: center; ">
+      5秒后跳转到登陆页面，点击立即跳转</p>
+  </a>
+
+  <script>
+
+    !function getPar() {
+      let local_url = document.location.href;
+      console.log(local_url);
+
+      let link = local_url.indexOf("link=");
+      if (link == -1) {
+        return false;
+      }
+
+      link = local_url.slice(link);
+
+      let xhr = new XMLHttpRequest();
+      xhr.open("GET", "/php/active.php?" + link);
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          if (xhr.responseText == "ok") {
+            document.getElementById("P").style.display = 'block';
+            setInterval(function () { location.href = "./login.html"; }, 3000);
+          }
+          else document.getElementById("H1").innerText = "无效连接";
+        }
+      }
+      xhr.send();
+
+    }()
+
+  </script>
+</body>
+
+</html>

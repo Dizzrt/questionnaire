@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Home</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <!-- Bootstrap CSS-->
+  <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
+  <!-- Font Awesome CSS-->
+  <link rel="stylesheet" href="vendor/font-awesome/css/font-awesome.min.css">
+  <!-- Custom Font Icons CSS-->
+  <link rel="stylesheet" href="css/font.css">
+  <!-- theme stylesheet-->
+  <link rel="stylesheet" href="css/style.default.css" id="theme-stylesheet">
+  <!-- Favicon-->
+  <link rel="shortcut icon" href="img/favicon.ico">
+</head>
+
+<body>
+  <div class="d-flex align-items-stretch">
+    <!-- Sidebar Navigation-->
+    <nav id="sidebar">
+      <!-- Sidebar Header-->
+      <div class="sidebar-header d-flex align-items-center">
+        <div class="avatar"><img src="img/avatar-6.png" alt="..." class="img-fluid rounded-circle"></div>
+        <div class="title">
+          <h1 id="uname" class="h5">usr name</h1>
+        </div>
+      </div>
+      <!-- Sidebar Navidation Menus--><span class="heading">Main</span>
+      <ul class="list-unstyled">
+        <li class="active"><a href="#"> <i class="icon-grid"></i>发起新问卷</a></li>
+        <li><a href="forms.html"> <i class="icon-padnote"></i>我的问卷</a></li>
+        <li><a href="#" onclick="logout()"> <i class="icon-logout"></i>登出</a></li>
+      </ul>
+    </nav>
+    <!-- Sidebar Navigation end-->
+    <div class="page-content">
+
+
+      <section class="no-padding-bottom" style="margin-top: 25px;">
+        <div class="container-fluid">
+          <div class="block">
+            <div class="title"><strong class="d-block">问卷基础信息设置</strong></div>
+            <div class="block-body">
+              <form class="form-horizontal">
+                <div class="form-group row">
+                  <label class="col-sm-3 form-control-label">问卷标题</label>
+                  <div class="col-sm-9">
+                    <input id="qtitle" class="form-control form-control-success">
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-sm-3 form-control-label">问卷简介</label>
+                  <div class="col-sm-9">
+                    <input id="qintro" class="form-control form-control-warning">
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="no-padding-bottom">
+        <div class="container-fluid">
+          <div class="block">
+            <div style=" height: 40px; width: 100%;">
+              <strong
+                style="height: 40px; text-align: center; line-height: 40px; font-size: 20px; color: #a5a7ab;">问答题x</strong>
+              <input style="height: 40px; float: right;" type="button" value="删除该问题" class="btn btn-primary">
+            </div>
+
+            <textarea id="inlineFormInput" type="text" style="margin-top: 25px; height: 100px; " placeholder="问题描述"
+              class="form-control"></textarea>
+          </div>
+        </div>
+      </section>
+
+
+      <section class="no-padding-bottom">
+        <div class="container-fluid">
+          <div class="block">
+            <div style=" height: 40px; width: 100%;">
+              <strong
+                style="height: 40px; text-align: center; line-height: 40px; font-size: 20px; color: #a5a7ab;">选择题x</strong>
+              <input style="height: 40px; float: right;" type="button" value="删除该问题" class="btn btn-primary">
+            </div>
+
+            <div class="block-body" style="margin-top: 25px;">
+              <form class="form-horizontal">
+                <div class="form-group row">
+                  <label class="col-sm-3 form-control-label">问题描述</label>
+                  <div class="col-sm-9">
+                    <input type="text" class="form-control">
+                  </div>
+                </div>
+
+                <div class="row" style="margin-top: 25px;">
+                  <label class="col-sm-3 form-control-label">可选项</label>
+
+                  <div class="col-sm-9">
+                    <div class="form-group-material">
+                      <input id="register-username" type="text" name="registerUsername" required class="input-material">
+                      <label for="register-username" class="label-material">选项A</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <div class="col-sm-9 ml-auto">
+                    <button type="submit" class="btn btn-primary" style="float: right;">添加一个选项</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="block-body text-center">
+        <button style="width: 110px; margin-right: 25px;" type="button" data-toggle="modal" data-target="#myModal"
+          class="btn btn-primary">添加选择题</button>
+
+        <button style="width: 110px; margin-right: 25px;" type="button" data-toggle="modal" data-target="#myModal"
+          class="btn btn-primary">添加问答题</button>
+
+        <button style="width: 110px; " type="button" data-toggle="modal" data-target="#myModal"
+          class="btn btn-primary">完成该问卷</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JavaScript files-->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+  <script src="js/front.js"></script>
+
+  <script>
+    !function init() {
+      let clist = document.cookie.split(";");
+      if (clist.length == 0) {
+        location.href = "./login.html";
+      }
+
+      for (let i = 0; i < clist.length; i++) {
+        let cookie = clist[i].trim();
+
+        if (cookie.indexOf("usrname=") == 0) {
+          let uname = cookie.substring(8, cookie.length);
+          document.getElementById("uname").innerText = uname;
+        }
+        else if (cookie.indexOf("uid=") == 0) {
+          let uid = cookie.substring(4, cookie.length);
+          if (uid == "")
+            location.href = "./login.html";
+        }
+      }
+    }()
+
+    function logout() {
+      document.cookie = "uid=";
+      location.href = "./login.html";
+    }
+  </script>
+</body>
+
+</html>
