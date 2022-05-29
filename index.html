@@ -80,6 +80,15 @@
 
         <button onclick="complete()" style="width: 110px; " type="button" class="btn btn-primary">完成该问卷</button>
       </div>
+
+      <footer class="footer">
+        <div class="footer__block block no-margin-bottom">
+          <div class="container-fluid text-center">
+            <p class="no-margin-bottom">Copyright &copy; 2022.鲁东大学-计本1902 <a href="mailto:3063676257@qq.com">石浩燃</a>&<a
+                href="mailto:3063676257@qq.com">张欢</a></p>
+          </div>
+        </div>
+      </footer>
     </div>
   </div>
 
@@ -93,7 +102,8 @@
 
     !function init() {
       let clist = document.cookie.split(";");
-      if (clist.length == 0) {
+
+      if (clist.length <= 1) {
         location.href = "./login.html";
       }
 
@@ -137,6 +147,7 @@
 
     function getCq() {
       let t = new Date().getTime();
+      let tt = t - 1000;
       cqs.push(t);
       let cq = "<section id=\"" + t + "\" class=\"no-padding-bottom\">\
           <div class=\"container-fluid\"><div class=\"block\"><div style=\" height: 40px; width: 100%;\">\
@@ -147,17 +158,23 @@
                     <label class=\"col-sm-3 form-control-label\">问题描述</label><div class=\"col-sm-9\">\
                       <input id=\"des_"+ t + "\" type=\"text\" class=\"form-control\"></div></div><div class=\"row\" style=\"margin-top: 25px;\">\
                     <label class=\"col-sm-3 form-control-label\">可选项</label>\
-                    <div class=\"col-sm-9\"><div id=\"ops_"+ t + "\" class=\"form-group-material\">\
+                    <div class=\"col-sm-9\"><div class=\"form-group-material\"><div id=\""+ tt + "\" >\
                         <input style=\"margin-bottom: 10px;\" placeholder=\"选项内容\" id=\"register-username\" type=\"text\" name=\"registerUsername\" required class=\"input-material\">\
                         <input style=\"margin-bottom: 10px;\" placeholder=\"选项内容\" id=\"register-username\" type=\"text\" name=\"registerUsername\" required class=\"input-material\">\
-                        </div></div></div>\
+                        </div></div></div></div>\
                   <div class=\"form-group row\"><div class=\"col-sm-9 ml-auto\">\
-                      <button type=\"submit\" class=\"btn btn-primary\" style=\"float: right;\">添加一个选项</button>\
+                    <button onclick=\"addOP("+ tt + ")\" type=\"button\" class=\"btn btn-primary\" style=\"float: right;\">添加一个选项</button>\
                     </div></div></form></div></div></div></section>"
 
       return cq;
     }
 
+    function addOP(id) {
+      console.log(id);
+      // document.getElementById(id).innerHTML += "<input style=\"margin-bottom: 10px;\" placeholder=\"选项内容\" id=\"register-username\" type=\"text\" name=\"registerUsername\" required class=\"input-material\">";
+      // document.getElementById(id).style.backgroundColor = "#61a39d";
+      $('#' + id).append("<input style=\"margin-bottom: 10px;\" placeholder=\"选项内容\" id=\"register-username\" type=\"text\" name=\"registerUsername\" required class=\"input-material\">");
+    }
 
     function addEq() {
       // document.getElementById("ques").innerHTML += getEq();
@@ -207,10 +224,10 @@
         let id = cqs[i];
         msg += "&cq" + i + "=" + document.getElementById("des_" + id).value;
 
-        let opsCnt = document.getElementById("ops_" + id).children.length;
+        let opsCnt = document.getElementById(id - 1000).children.length;
         msg += "&cq" + i + "_opCnt=" + opsCnt;
 
-        let ops = document.getElementById("ops_" + id).children
+        let ops = document.getElementById(id - 1000).children
         for (let j = 0; j < opsCnt; j++) {
           msg += "&cq" + i + "_op" + j + "=" + ops[j].value;
         }
@@ -225,7 +242,7 @@
           }
           else {
             var temp = document.createElement('input');
-            temp.value = xhr.responseText;//TODO real url
+            temp.value = document.domain + '/answer?queID=' + xhr.responseText;
             document.body.appendChild(temp);
             temp.select();
             document.execCommand("Copy");
@@ -233,6 +250,7 @@
             temp.style.display = 'none';
 
             alert("问卷创建成功！问卷链接已复制到剪切板，快去分享吧！");
+            location.reload();
           }
         }
       }

@@ -47,7 +47,7 @@ if ($con->query($sql) == FALSE) {
 $queID=$qtableID-1;
 
 foreach($eqs as $key=>$val){
-    $t=json_encode(array("des:"=>$val));
+    $t=json_encode(array("des"=>$val),JSON_UNESCAPED_UNICODE);
     $sql='insert into ques (queID,qtableID,queType,queDes) values ("'.$queID.'","'.$qtableID.'","0",\''.$t.'\');';
     $queID-=1;
     
@@ -58,14 +58,24 @@ foreach($eqs as $key=>$val){
 }
 
 foreach($cqs as $key=>$val){
-    $t=json_encode($val);
+    $t=json_encode($val,JSON_UNESCAPED_UNICODE);
     $sql='insert into ques (queID,qtableID,queType,queDes) values ("'.$queID.'","'.$qtableID.'","1",\''.$t.'\');';
-    $queID-=1;
 
     if ($con->query($sql) == FALSE) {
         echo "error";
         return;
     }
+
+    for($i=0;$i<$val["ops"]["opCnt"];$i++){
+        $sql='insert into cqans (queID,ops) values ("'.$queID.'","o'.$i.'");';
+        
+        if ($con->query($sql) == FALSE) {
+            echo "error";
+            return;
+        }
+    }
+
+    $queID-=1;
 }
 
 echo $qtableID;

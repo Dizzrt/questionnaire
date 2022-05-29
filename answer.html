@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Home</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <!-- Bootstrap CSS-->
+  <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
+  <!-- Font Awesome CSS-->
+  <link rel="stylesheet" href="vendor/font-awesome/css/font-awesome.min.css">
+  <!-- Custom Font Icons CSS-->
+  <link rel="stylesheet" href="css/font.css">
+  <!-- theme stylesheet-->
+  <link rel="stylesheet" href="css/style.default.css" id="theme-stylesheet">
+  <!-- Favicon-->
+  <link rel="shortcut icon" href="img/favicon.ico">
+</head>
+
+<body>
+  <div id="_pc" class="page-content" style="width: 100%;">
+    <section class="no-padding-bottom" style="padding-top: 25px;">
+      <div class="container-fluid">
+        <div class="block">
+          <div class="title"><strong class="d-block">问卷基础信息</strong></div>
+          <div class="block-body">
+            <form class="form-horizontal">
+              <div class="form-group row">
+                <label class="col-sm-3 form-control-label">问卷标题</label>
+                <div class="col-sm-9">
+                  <p id="qtitle" class="form-control form-control-success">title</p>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-sm-3 form-control-label">问卷简介</label>
+                <div class="col-sm-9">
+                  <p style="word-wrap: break-word; height: auto;" id="qdes" class="form-control form-control-warning">
+                    des
+                  </p>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="ques">
+    </div>
+
+    <div class="block-body text-center">
+      <button id="_sub" style="width: 110px; " type="button" class="btn btn-primary">提交问卷</button>
+    </div>
+
+
+
+    <footer class="footer">
+      <div class="footer__block block no-margin-bottom">
+        <div class="container-fluid text-center">
+          <p class="no-margin-bottom">Copyright &copy; 2022.鲁东大学-计本1902 <a href="mailto:3063676257@qq.com">石浩燃</a>&<a
+              href="mailto:3063676257@qq.com">张欢</a></p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+
+  <!-- JavaScript files-->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+  <script src="js/front.js"></script>
+
+  <script>
+    var eqids = [];
+    var cqids = [];
+
+    function addQue(jque) {
+      for (let q = 0; q < jque.length; q++) {
+        let que = jque[q];
+        // console.log(que);
+
+        if (que["queType"] == "0") {
+          eqids.push(que["queID"]);
+          let des = JSON.parse(que["queDes"]);
+
+          let eq = "<section class=\"no-padding-bottom\"><div class=\"container-fluid\"><div class=\"block\">\
+      <div class=\"title\"><strong class=\"d-block\">问答题"+ eqids.length + "</strong><span class=\"d-block\">" + des["des"] + "</span></div>\
+      <textarea id="+ que["queID"] + " style=\"height: 100px;\" type=\"text\" placeholder=\"请在此填入您的回答\" class=\"form-control\"></textarea>\
+    </div></div></section>"
+
+          $('#ques').append(eq);
+        }
+        else if (que["queType"] == 1) {
+          cqids.push(que["queID"]);
+          let des = JSON.parse(que["queDes"]);
+
+          let op = "";
+          for (let oc = 0; oc < des["ops"]["opCnt"]; oc++) {
+            op += "<div class=\"i-checks\">\
+                    <input type=\"radio\" value=\"o"+ oc + "\" name=\"cq" + que["queID"] + "\" class=\"radio-template\">\
+                    <label for=\"radioCustom1\">"+ des["ops"]["op" + oc] + "</label></div>"
+          }
+
+          let cq = "<section class=\"no-padding-bottom\"><div class=\"container-fluid\"><div class=\"block\">\
+            <div class=\"title\"><strong>选择题 "+ cqids.length + "</strong><span class=\"d-block\">" + des["des"] + "</span></div>\
+            <div class=\"block-body\"><form class=\"form-horizontal\" id=\"cq"+ que["queID"] + "\">\
+            " + op + "</form></div></div></div></section>"
+
+          $('#ques').append(cq);
+        }
+      }
+    }
+
+    var qtableID;
+    !function init() {
+      let local_url = document.location.href;
+      let queID = local_url.slice(local_url.indexOf("queID="));
+      qtableID = queID.slice(queID.indexOf("=") + 1);
+
+      let xhr = new XMLHttpRequest();
+      xhr.open("GET", "/php/answer_get.php?" + queID);
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          if (xhr.responseText == "error") {
+            alert("无效链接！");
+            location.href = "./index.html";
+          }
+          else {
+            let ret = JSON.parse(xhr.responseText);
+
+            document.getElementById("qtitle").innerText = ret["title"];
+            document.getElementById("qdes").innerText = ret["des"];
+
+            addQue(ret["ques"]);
+          }
+        }
+      }
+      xhr.send();
+
+    }()
+
+    $('#_sub').on('click', function () {
+      let form = {};
+
+      form["qtableID"] = qtableID;
+      form["eqCnt"] = eqids.length;
+      form["cqCnt"] = cqids.length;
+
+      let eqs = [];
+      for (let i = 0; i < eqids.length; i++) {
+        let temp = {};
+
+        temp["id"] = eqids[i];
+        temp["res"] = document.getElementById(eqids[i]).value;
+
+        eqs.push(temp);
+      }
+
+      form["eqs"] = eqs;
+
+      let cqs = [];
+      for (let i = 0; i < cqids.length; i++) {
+        let temp = {};
+
+        let iid = cqids[i];
+        temp["id"] = iid;
+
+        let opCnt = (document.getElementById("cq" + iid).children)[0].children.length;
+
+        for (let j = 0; j < opCnt; j++) {
+          let t = "o" + j;
+          if (document.forms["cq" + iid]["cq" + iid].value == t) {
+            temp["op"] = t;
+            break;
+          }
+        }
+        cqs.push(temp);
+      }
+
+      form["cqs"] = cqs;
+
+      let msg = JSON.stringify(form);
+
+      let xhr = new XMLHttpRequest();
+      xhr.open("GET", "/php/answer_set.php?form=" + msg);
+
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          if (xhr.responseText == "ok") {
+            document.getElementById("_pc").innerHTML = "<section class=\"no-padding-bottom\" style=\"padding-top: 25px;\">\
+      <div class=\"container-fluid\"><h1 style=\"text-align: center;\">感谢您的回答！</h1></div></section>"
+          }
+          else {
+            alert("error");
+            return;
+          }
+        }
+      }
+      xhr.send();
+
+    });
+
+  </script>
+
+
+</body>
+
+</html>

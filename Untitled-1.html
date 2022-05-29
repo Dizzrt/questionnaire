@@ -5,22 +5,51 @@
 </head>
 
 <body>
-    <div cols="20" id="biao1">12345678</div>
-    <input type="button" onClick="copyUrl2()" value="点击复制代码" />
+
+    <div id="hhh">
+
+
+    </div>
 
     <script>
+        // convert #hex notation to rgb array
+        var parseColor = function (hexStr) {
+            return hexStr.length === 4 ? hexStr.substr(1).split('').map(function (s) { return 0x11 * parseInt(s, 16); }) : [hexStr.substr(1, 2), hexStr.substr(3, 2), hexStr.substr(5, 2)].map(function (s) { return parseInt(s, 16); })
+        };
 
-        function copyUrl2() {
-            var Url2 = document.getElementById("biao1").innerText;
-            var oInput = document.createElement('input');
-            oInput.value = Url2;
-            document.body.appendChild(oInput);
-            oInput.select(); // 选择对象
-            document.execCommand("Copy"); // 执行浏览器复制命令
-            oInput.className = 'oInput';
-            oInput.style.display = 'none';
-            alert('复制成功');
+        // zero-pad 1 digit to 2
+        var pad = function (s) {
+            return (s.length === 1) ? '0' + s : s;
+        };
+
+        var gradientColors = function (start, end, steps, gamma) {
+            var i, j, ms, me, output = [], so = [];
+            gamma = gamma || 1;
+            var normalize = function (channel) {
+                return Math.pow(channel / 255, gamma);
+            };
+            start = parseColor(start).map(normalize);
+            end = parseColor(end).map(normalize);
+            for (i = 0; i < steps; i++) {
+                ms = i / (steps - 1);
+                me = 1 - ms;
+                for (j = 0; j < 3; j++) {
+                    so[j] = pad(Math.round(Math.pow(start[j] * me + end[j] * ms, 1 / gamma) * 255).toString(16));
+                }
+                output.push('#' + so.join(''));
+            }
+            return output;
+        };
+
+        // try if it works
+
+        let c = gradientColors('#7117ea', '#ea6060', 4);
+        for (let i = 0; i < 100; i++) {
+            document.getElementById("hhh").innerHTML += "<div style=\"width: 100px; height: 30px; background-color: " + c[i] + ";\"></div>"
         }
+
+        // 泥萌的新需求
+        // console.log(gradientColors('#000', '#fff', 100, 2.2));
     </script>
 </body>
 
