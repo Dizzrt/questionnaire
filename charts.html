@@ -53,28 +53,6 @@
 
 
       <div id="charts" style="margin-top: 25px;">
-
-        <section class="no-padding-bottom">
-          <div class="container-fluid">
-            <div class="block ">
-              <div class="title"><strong class="d-block">问答题 X</strong><span class="d-block">des</span></div>
-              <p style="border: 1px solid #444951; height:150px; overflow-x: hidden; overflow-y: scroll; word-wrap:
-                break-word; ">
-                testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest
-              </p>
-              <div style="display: inline-block; width: 100%;">
-                <div style="float: right; ">
-                  <p style="text-align: right;">xxxxx</p>
-                  <button onclick="pre(id)" disabled="true" style="margin-right: 5px;" type="button"
-                    class="btn btn-primary">上一条</button>
-                  <button onclick="next(id)" type="button" class="btn btn-primary">下一条</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-
       </div>
 
       <footer class="footer">
@@ -128,37 +106,46 @@
     var cqCnt = 0;
     var eqCnt = 0;
 
+    var eqAns = {};
+
     function drawEQ(que) {
-      let temp = "<section class=\"no-padding-bottom\"><div class=\"container-fluid\"><div class=\"block\">\
-      <div class=\"title\"><strong class=\"d-block\">问答题 "+ (eqCnt + 1) + "</strong><span class=\"d-block\">" + que["des"] + "</span></div>\
-      <p style=\"border: 1px solid #444951; height:150px; overflow-x: hidden; overflow-y: scroll;  word-wrap: break-word;  \">testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest</p>\
-    </div></div></section>";
+      let temp = "<section class=\"no-padding-bottom\"><div class=\"container-fluid\">\
+            <div class=\"block \"><div class=\"title\"><strong class=\"d-block\">问答题 "+ (eqCnt + 1) + "</strong><span class=\"d-block\">" + JSON.parse(que["des"])["des"] + "</span></div>\
+              <p style=\"border: 1px solid #444951; height:150px; overflow-x: hidden; overflow-y: scroll; word-wrap:\
+                break-word; \" id=\"ans_"+ que["id"] + "\">" + eqAns[que["id"]][0] + "</p><div style=\"display: inline-block; width: 100%;\">\
+                <div style=\"float: right; \"><p id=\"pos_"+ que["id"] + "\" style=\"text-align: right;\">" + (eqAns[que["id"] + "_pos"] + 1) + "/" + eqAns[que["id"]].length + "</p>\
+                  <button id=\"pb_"+ que["id"] + "\" onclick=\"pre(" + que["id"] + ")\" disabled=\"true\" style=\"margin-right: 5px;\" type=\"button\"\
+                    class=\"btn btn-primary\">上一条</button><button id=\"nb_"+ que["id"] + "\" onclick=\"next(" + que["id"] + ")\" type=\"button\" class=\"btn btn-primary\">下一条</button>\
+                </div></div></div></div></section>";
 
       $("#charts").append(temp);
-
+      eqCnt += 1;
     }
 
     function drawCQ(que) {
+      let des = JSON.parse(que["des"]);
+      let opCnt = des["ops"]["opCnt"];
+
       let _lable = [];
       let _data = [];
       let op = "";
-      for (let i = 0; i < que["opCnt"]; i++) {
+      for (let i = 0; i < opCnt; i++) {
         _lable.push(String.fromCharCode(i + 65));
-        _data.push(que["o" + i]);
+        _data.push(que["ans"]["o" + i]);
 
-        op += "<p>" + String.fromCharCode(i + 65) + ": " + que["des" + i] + "</p>";
+        op += "<p>" + String.fromCharCode(i + 65) + ": " + des["ops"]["op" + i] + "</p>";
       }
 
       let temp = "<section class=\"no-padding-bottom\"><div class=\"container-fluid\">\
           <div class=\"pie-chart chart block\">\
-            <div class=\"title\"><strong class=\"d-block\">选择题 "+ (cqCnt + 1) + "</strong><span class=\"d-block\">" + que["des"] + "</span></div>\
+            <div class=\"title\"><strong class=\"d-block\">选择题 "+ (cqCnt + 1) + "</strong><span class=\"d-block\">" + des["des"] + "</span></div>\
             <div class=\"row\"><div class=\"col-lg-8\">\
-              "+ op + "</div><div><canvas id=\"cqchart" + cqCnt + "\"></canvas></div>\
+              "+ op + "</div><div><canvas id=\"cqchart" + que["id"] + "\"></canvas></div>\
             </div></div></div></section>";
 
       $("#charts").append(temp);
 
-      let tchart = new Chart($("#" + "cqchart" + cqCnt), {
+      let tchart = new Chart($("#" + "cqchart" + que["id"]), {
         type: 'pie',
         options: {
           legend: {
@@ -172,8 +159,8 @@
             {
               data: _data,
               borderWidth: 0,
-              backgroundColor: gradientColors('#7117ea', '#ea6060', que["opCnt"]),
-              hoverBackgroundColor: gradientColors('#7117ea', '#ea6060', que["opCnt"])
+              backgroundColor: gradientColors('#7117ea', '#ea6060', opCnt),
+              hoverBackgroundColor: gradientColors('#7117ea', '#ea6060', opCnt)
             }]
         }
       });
@@ -182,15 +169,62 @@
     }
 
     $(document).ready(function () {
+      let clist = document.cookie.split(";");
+
+      if (clist.length <= 1) {
+        location.href = "./login.html";
+      }
+
+      for (let i = 0; i < clist.length; i++) {
+        let cookie = clist[i].trim();
+
+        if (cookie.indexOf("usrname=") == 0) {
+          let uname = cookie.substring(8, cookie.length);
+          document.getElementById("uname").innerText = uname;
+        }
+        else if (cookie.indexOf("uid=") == 0) {
+          let uid = cookie.substring(4, cookie.length);
+          if (uid == "")
+            location.href = "./login.html";
+        }
+      }
+
       'use strict';
       Chart.defaults.global.defaultFontColor = '#75787c';
 
       let local_url = document.location.href;
-      let qtableID = local_url.slice(local_url.indexOf("qtableID="));
+      let qtableID = local_url.slice(local_url.indexOf("qid="));
+      qtableID = qtableID.substring(4, qtableID.length);
 
+      let xhr = new XMLHttpRequest();
+      xhr.open("GET", "./php/statistic.php?id=" + qtableID, true);
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          if (xhr.responseText == "error") {
+            alert("error");
+            return;
+          }
+          else {
+            let r = JSON.parse(xhr.responseText);
 
-      drawCQ({ "opCnt": 4, "des": "test", "des0": "des0", "des1": "des1", "des2": "des2", "des3": "des3", "o0": 12, "o1": 12, "o2": 12, "o3": 14 });
-      drawEQ({ "des": "eqdes" });
+            for (let i = 0; i < r.length; i++) {
+              if (r[i]["type"] == 0) {
+                eqAns[r[i]["id"]] = r[i]["ans"];
+                eqAns[r[i]["id"] + "_pos"] = 0;
+
+                drawEQ(r[i]);
+              }
+              else if (r[i]["type"] == 1) {
+                drawCQ(r[i]);
+              }
+            }
+          }
+        }
+      }
+      xhr.send();
+
+      // drawCQ({ "opCnt": 4, "des": "test", "des0": "des0", "des1": "des1", "des2": "des2", "des3": "des3", "o0": 12, "o1": 12, "o2": 12, "o3": 14 });
+      // drawEQ({ "des": "eqdes" });
 
       // for (let ii = 0; ii < 0; ii++) {
       //   let temp = getOPC();
@@ -203,6 +237,43 @@
         responsive: true
       };
     });
+
+    function next(id) {
+
+      let m = eqAns[id].length;
+      let c = eqAns[id + "_pos"];
+
+      c += 1;
+      eqAns[id + "_pos"] = c;
+
+      if (c > 0 && document.getElementById("pb_" + id).disabled == true)
+        document.getElementById("pb_" + id).disabled = false;
+
+
+
+      if ((c + 1) == m)
+        document.getElementById("nb_" + id).disabled = true;
+
+      document.getElementById("ans_" + id).innerText = eqAns[id][c];
+      document.getElementById("pos_" + id).innerText = c + 1 + "/" + m;
+    }
+
+    function pre(id) {
+      let m = eqAns[id].length;
+      let c = eqAns[id + "_pos"];
+
+      c -= 1;
+      eqAns[id + "_pos"] = c;
+
+      if (c == 0)
+        document.getElementById("pb_" + id).disabled = true;
+
+      if (c < m - 1 && document.getElementById("nb_" + id).disabled == true)
+        document.getElementById("nb_" + id).disabled = false;
+
+      document.getElementById("ans_" + id).innerText = eqAns[id][c];
+      document.getElementById("pos_" + id).innerText = c + 1 + "/" + m;
+    }
 
   </script>
 
